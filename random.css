@@ -1,0 +1,17 @@
+.background {
+      fill: #fffff8;
+  }
+.system {
+	stroke: #111111;
+	fill: #fffff8;
+	stroke-opacity: 0.5;
+	stroke-width: 1.5px;
+}
+.event {
+	stroke: #111111;
+	stroke-width: 1.0;
+}
+.syslabel {
+	font-family: "Gill Sans";
+    font-size: 12px;
+}
