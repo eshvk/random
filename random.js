@@ -3,7 +3,7 @@ function getRandomIntInclusive(min, max) {
 }
 var w = 600,
     h = 300,
-    padding = 15;
+    padding = 3;
 var eS = 30;
 var svg = d3.select("body")
     .append("svg");
@@ -16,8 +16,8 @@ svg.attr("width", w)
 var events = svg.append("g");
 events.append("rect")
     .attr("class", "event")
-    .attr("x", w/4 - eS)
-    .attr("y", w/4 - eS)
+    .attr("x", w/2 - eS)
+    .attr("y", padding)
     .attr("id", 1)
     .attr("width", eS)
     .attr("height", eS)
@@ -25,8 +25,8 @@ events.append("rect")
     .attr("fill-opacity", "0.5");
 events.append("rect")
     .attr("class", "event")
-    .attr("x", w/4 - eS)
-    .attr("y", w/4)
+    .attr("x", w/2)
+    .attr("y", padding)
     .attr("id", 2)
     .attr("width", eS)
     .attr("height", eS)
@@ -34,8 +34,8 @@ events.append("rect")
     .attr("fill-opacity", "0.5");
 events.append("rect")
     .attr("class", "event")
-    .attr("x", w/4)
-    .attr("y", w/4 - eS)
+    .attr("x", w/2 - eS)
+    .attr("y", padding + eS)
     .attr("id", 3)
     .attr("width", eS)
     .attr("height", eS)
@@ -43,18 +43,36 @@ events.append("rect")
     .attr("fill-opacity", "0.5");
 events.append("rect")
     .attr("class", "event")
-    .attr("x", w/4)
-    .attr("y", w/4)
+    .attr("x", w/2)
+    .attr("y", padding + eS)
     .attr("id", 4)
     .attr("width", eS)
     .attr("height", eS)
     .attr("fill", "#0571b0")
     .attr("fill-opacity", "0.5");
+function getSamples(){
+    return Math.floor(Math.random()*4) + 1;
+}
+var ii = 1;
+function sampleUp() {
+    ii += 1;
+    d3
+    .selectAll(".event")
+    .filter(function(d) {
+        l = getSamples();
+        console.log("The value is " + l);
+        return d3.select(this).attr('id') == l;
+    })
+    .transition()
+    .duration(50)
+    .attr("fill-opacity", "1")
+    .transition()
+    .duration(50)
+    .attr("fill-opacity", "0.5")
+    .transition()
+    .duration(100)
+    .on("end", sampleUp);
 
-// sys.append("rect")
-//     .attr("class", "system")
-//     .attr("x", w/2 - w/12)
-//     .attr("y", h/2 - h/12)
-//     .attr("width", w/6)
-//     .attr("height", h/6);
+}
+sampleUp();
 
