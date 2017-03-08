@@ -11,6 +11,9 @@
 	stroke: #111111;
 	stroke-width: 1.0;
 }
+.button {
+	fill: salmon;
+}
 .syslabel {
 	font-family: "Gill Sans";
     font-size: 12px;

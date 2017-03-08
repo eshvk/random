@@ -1,9 +1,10 @@
 function getRandomIntInclusive(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 var w = 600,
     h = 300,
-    padding = 3;
+    padding = 3,
+    radius = 10;
 var eS = 30;
 var svg = d3.select("body")
     .append("svg");
@@ -13,10 +14,17 @@ svg.attr("width", w)
     .attr("class", "background")
     .attr("width", "100%")
     .attr("height", "100%");
+svg
+    .append("circle")
+    .attr("class", "button")
+    .attr("cx", w / 8 + padding)
+    .attr("cy", eS / 2 + padding)
+    .attr("fill-opacity", "0.5")
+    .attr("r", radius);
 var events = svg.append("g");
 events.append("rect")
     .attr("class", "event")
-    .attr("x", w/2 - eS)
+    .attr("x", w / 2 - eS)
     .attr("y", padding)
     .attr("id", 1)
     .attr("width", eS)
@@ -25,7 +33,7 @@ events.append("rect")
     .attr("fill-opacity", "0.5");
 events.append("rect")
     .attr("class", "event")
-    .attr("x", w/2)
+    .attr("x", w / 2)
     .attr("y", padding)
     .attr("id", 2)
     .attr("width", eS)
@@ -34,7 +42,7 @@ events.append("rect")
     .attr("fill-opacity", "0.5");
 events.append("rect")
     .attr("class", "event")
-    .attr("x", w/2 - eS)
+    .attr("x", w / 2 - eS)
     .attr("y", padding + eS)
     .attr("id", 3)
     .attr("width", eS)
@@ -43,31 +51,36 @@ events.append("rect")
     .attr("fill-opacity", "0.5");
 events.append("rect")
     .attr("class", "event")
-    .attr("x", w/2)
+    .attr("x", w / 2)
     .attr("y", padding + eS)
     .attr("id", 4)
     .attr("width", eS)
     .attr("height", eS)
     .attr("fill", "#0571b0")
     .attr("fill-opacity", "0.5");
-function getSamples(){
-    return Math.floor(Math.random()*4) + 1;
+
+function getSamples() {
+    return Math.floor(Math.random() * 4) + 1;
 }
-var curr = 1;
+var curr;
+
 function sampleUp() {
     curr = getSamples()
     d3
-    .selectAll(".event")
-    .filter(function() {
-        return d3.select(this).attr('id') == curr;
-    })
-    .transition()
-    .duration(50)
-    .attr("fill-opacity", "1")
-    .transition()
-    .duration(50)
-    .attr("fill-opacity", "0.5")
-    .on("end", sampleUp);
+        .selectAll(".event")
+        .filter(function() {
+            return d3.select(this).attr('id') == curr;
+        })
+        .transition()
+        .duration(50)
+        .attr("fill-opacity", "1")
+        .transition()
+        .duration(50)
+        .attr("fill-opacity", "0.5")
+        .on("end", sampleUp);
 }
-sampleUp();
 
+d3.selectAll(".button")
+    .on("mouseover", function() {d3.select(this).attr("fill-opacity", "1.0");})
+    .on("mouseout", function() {d3.select(this).attr("fill-opacity", "0.5")})
+    .on("click", function() {sampleUp();})
