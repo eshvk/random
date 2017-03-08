@@ -53,15 +53,13 @@ events.append("rect")
 function getSamples(){
     return Math.floor(Math.random()*4) + 1;
 }
-var ii = 1;
+var curr = 1;
 function sampleUp() {
-    ii += 1;
+    curr = getSamples()
     d3
     .selectAll(".event")
-    .filter(function(d) {
-        l = getSamples();
-        console.log("The value is " + l);
-        return d3.select(this).attr('id') == l;
+    .filter(function() {
+        return d3.select(this).attr('id') == curr;
     })
     .transition()
     .duration(50)
@@ -69,10 +67,7 @@ function sampleUp() {
     .transition()
     .duration(50)
     .attr("fill-opacity", "0.5")
-    .transition()
-    .duration(100)
     .on("end", sampleUp);
-
 }
 sampleUp();
 
