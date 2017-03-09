@@ -4,7 +4,8 @@ function getRandomIntInclusive(min, max) {
 var w = 600,
     h = 300,
     padding = 3,
-    radius = 10;
+    buttonRadius = 10,
+    sampleR = 5;
 var eS = 30;
 var svg = d3.select("body")
     .append("svg");
@@ -20,7 +21,31 @@ svg
     .attr("cx", w / 8 + padding)
     .attr("cy", eS / 2 + padding)
     .attr("fill-opacity", "0.5")
-    .attr("r", radius);
+    .attr("r", buttonRadius);
+var equation = svg
+    .append("g")
+    .attr("class", "equation")
+    .attr("transform", "translate(0," + h/2 + ")");
+equation
+    .append("text")
+    .attr("x", padding)
+    .attr("y", padding )
+    .text("X( ")
+    .attr("text-anchor", "start");
+equation
+    .append("circle")
+    .attr("cx", padding + 20 + sampleR)
+    .attr("stroke", "#111111")
+    .attr("stroke-width", "1.0")
+    .attr("fill", "none")
+    .attr("r", sampleR);
+equation
+    .append("text")
+    .attr("x", padding + 20 + 5  + 2* sampleR)
+    .attr("y", padding )
+    .attr("text-anchor", "start")
+    .text(") = ");
+
 var events = svg.append("g");
 events.append("rect")
     .attr("class", "event")
