@@ -17,4 +17,5 @@
 .equation {
 	font-family: "Gill Sans";
     font-size: 15px;
+    text-anchor: start;
 }

@@ -5,7 +5,9 @@ var w = 600,
     h = 300,
     padding = 3,
     buttonRadius = 10,
-    sampleR = 5;
+    sampleR = 5,
+    refreshT = 50,
+    colorMap = {1: "#ca0020", 2: "#f4a582", 3:"#92c5de", 4: "#0571b0"};
 var eS = 30;
 var svg = d3.select("body")
     .append("svg");
@@ -31,20 +33,26 @@ equation
     .attr("x", padding)
     .attr("y", padding )
     .text("X( ")
-    .attr("text-anchor", "start");
 equation
     .append("circle")
+    .attr("class", "randominp")
     .attr("cx", padding + 20 + sampleR)
+    .attr("cy", -padding/2)
     .attr("stroke", "#111111")
     .attr("stroke-width", "1.0")
-    .attr("fill", "none")
-    .attr("r", sampleR);
+    .attr("r", sampleR)
+    .attr("fill", "none");
 equation
     .append("text")
     .attr("x", padding + 20 + 5  + 2* sampleR)
     .attr("y", padding )
-    .attr("text-anchor", "start")
     .text(") = ");
+equation
+    .append("text")
+    .attr("class", "randomvalue")
+    .attr("x", padding + 20 + 10 + 20 + 2* sampleR)
+    .attr("y", padding)
+    .attr("opacity", 0);
 
 var events = svg.append("g");
 events.append("rect")
@@ -54,7 +62,7 @@ events.append("rect")
     .attr("id", 1)
     .attr("width", eS)
     .attr("height", eS)
-    .attr("fill", "#ca0020")
+    .attr("fill", colorMap[1])
     .attr("fill-opacity", "0.5");
 events.append("rect")
     .attr("class", "event")
@@ -63,7 +71,7 @@ events.append("rect")
     .attr("id", 2)
     .attr("width", eS)
     .attr("height", eS)
-    .attr("fill", "#f4a582")
+    .attr("fill", colorMap[2])
     .attr("fill-opacity", "0.5");
 events.append("rect")
     .attr("class", "event")
@@ -72,7 +80,7 @@ events.append("rect")
     .attr("id", 3)
     .attr("width", eS)
     .attr("height", eS)
-    .attr("fill", "#92c5de")
+    .attr("fill", colorMap[3])
     .attr("fill-opacity", "0.5");
 events.append("rect")
     .attr("class", "event")
@@ -81,7 +89,7 @@ events.append("rect")
     .attr("id", 4)
     .attr("width", eS)
     .attr("height", eS)
-    .attr("fill", "#0571b0")
+    .attr("fill", colorMap[4])
     .attr("fill-opacity", "0.5");
 
 function getSamples() {
@@ -89,18 +97,41 @@ function getSamples() {
 }
 var curr;
 
-function sampleUp() {
-    curr = getSamples()
+function updateRVO(t, c) {
+    d3
+    .selectAll(".randomvalue")
+    .text(c)
+    .transition(t)
+    .style("opacity", "1")
+    .transition()
+    .duration(refreshT)
+    .style("opacity", "0");  
+}
+
+function updateRVI(t, c) {
+    d3
+    .selectAll(".randominp")
+    .transition(t)
+    .attr("fill", colorMap[c])
+    .transition()
+    .duration(refreshT)
+    .attr("fill", "none");
+}
+
+
+function sampleUp(t) {
+    curr = getSamples();
+    updateRVO(t, curr);
+    updateRVI(t, curr);
     d3
         .selectAll(".event")
         .filter(function() {
             return d3.select(this).attr('id') == curr;
         })
-        .transition()
-        .duration(50)
+        .transition(t)
         .attr("fill-opacity", "1")
         .transition()
-        .duration(50)
+        .duration(refreshT)
         .attr("fill-opacity", "0.5")
         .on("end", sampleUp);
 }
@@ -108,4 +139,8 @@ function sampleUp() {
 d3.selectAll(".button")
     .on("mouseover", function() {d3.select(this).attr("fill-opacity", "1.0");})
     .on("mouseout", function() {d3.select(this).attr("fill-opacity", "0.5")})
-    .on("click", function() {sampleUp();})
+    .on("click", function() {
+        var t = d3.transition()
+        .duration(refreshT);
+        sampleUp(t);
+    })
