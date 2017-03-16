@@ -7,7 +7,13 @@ var w = 600,
     buttonRadius = 10,
     sampleR = 5,
     refreshT = 50,
-    colorMap = {1: "#ca0020", 2: "#f4a582", 3:"#92c5de", 4: "#0571b0"};
+    dataset = [{"id": 1, "f": 0},
+    {"id": 2, "f": 0},
+    {"id": 3, "f": 0},
+    {"id": 4, "f": 0},
+    ],
+    colorMap = {1: "#ca0020", 2: "#f4a582", 3:"#92c5de", 4: "#0571b0"},
+    nSamples = 0;
 var eS = 30;
 var svg = d3.select("body")
     .append("svg");
@@ -92,7 +98,38 @@ events.append("rect")
     .attr("fill", colorMap[4])
     .attr("fill-opacity", "0.5");
 
+var xScale = d3
+    .scalePoint()
+    .domain([1, 2, 3, 4])
+    .range([padding, w/2 - padding]);
+var yScale = d3
+    .scaleLinear()
+    .domain([0, 1])
+    .range([0, -h/3]);
+var numberLine = d3
+    .axisBottom()
+    .scale(xScale)
+    .ticks(4);
+
+var pmf = svg
+    .append("g")
+    .attr("transform", "translate(" + w/2 +  "," + 2*h/3 + ")");
+pmf.append("g").call(numberLine);
+var chart = pmf.append("g")
+    .attr("class", "chart");
+chart.selectAll("line")
+    .data(dataset)
+    .enter()
+    .append("line")
+    .attr("class", "pointmf")
+    .attr("x1", function (d) {return xScale(d.id)})
+    .attr("x2", function (d) {return xScale(d.id)})
+    .attr("y1", function (d) {return yScale(0)})
+    .attr("y2", function (d) {return yScale(d.f)})
+    .attr("stroke", function (d) {return colorMap[d.id]});
+
 function getSamples() {
+    nSamples += 1
     return Math.floor(Math.random() * 4) + 1;
 }
 var curr;
@@ -117,10 +154,19 @@ function updateRVI(t, c) {
     .duration(refreshT)
     .attr("fill", "none");
 }
-
+function updatePMF(t, c) {
+   var ii = dataset.findIndex(x => x.id == curr);
+   dataset[ii].f += 1;
+   chart
+        .selectAll("line")
+        .data(dataset)
+        .transition(t)
+        .attr("y2", function(d) {return yScale(d.f/nSamples); });
+}
 
 function sampleUp(t) {
     curr = getSamples();
+    updatePMF(t, curr);
     updateRVO(t, curr);
     updateRVI(t, curr);
     d3
