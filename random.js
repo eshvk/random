@@ -13,7 +13,8 @@ var w = 600,
     {"id": 4, "f": 0},
     ],
     colorMap = {1: "#ca0020", 2: "#f4a582", 3:"#92c5de", 4: "#0571b0"},
-    nSamples = 0;
+    nSamples = 0,
+    buttonStatus = false;
 var eS = 30;
 var svg = d3.select("body")
     .append("svg");
@@ -139,20 +140,31 @@ function updateRVO(t, c) {
     .selectAll(".randomvalue")
     .text(c)
     .transition(t)
+    .on("interrupt", function() {
+        d3.select(this).style("opacity", 0);
+    })
     .style("opacity", "1")
     .transition()
     .duration(refreshT)
-    .style("opacity", "0");  
+    .style("opacity", "0");
 }
 
 function updateRVI(t, c) {
     d3
     .selectAll(".randominp")
     .transition(t)
+    .on("interrupt", function() {
+        d3.select(this).attr("fill", "none");
+    })
     .attr("fill", colorMap[c])
     .transition()
     .duration(refreshT)
     .attr("fill", "none");
+}
+function resetData(){
+    dataset.forEach(x => x.f = 0);
+    nSamples  = 0;
+    return dataset;
 }
 function updatePMF(t, c) {
    var ii = dataset.findIndex(x => x.id == curr);
@@ -161,6 +173,12 @@ function updatePMF(t, c) {
         .selectAll("line")
         .data(dataset)
         .transition(t)
+        .on("interrupt", function() {
+            chart
+            .selectAll("line")
+            .data(resetData())
+            .attr("y2", function(d) {return yScale(d.f/1); });
+        })
         .attr("y2", function(d) {return yScale(d.f/nSamples); });
 }
 
@@ -175,6 +193,9 @@ function sampleUp(t) {
             return d3.select(this).attr('id') == curr;
         })
         .transition(t)
+        .on("interrupt", function() {
+            d3.select(this).attr("fill-opacity", "0.5");
+        })
         .attr("fill-opacity", "1")
         .transition()
         .duration(refreshT)
@@ -186,7 +207,12 @@ d3.selectAll(".button")
     .on("mouseover", function() {d3.select(this).attr("fill-opacity", "1.0");})
     .on("mouseout", function() {d3.select(this).attr("fill-opacity", "0.5")})
     .on("click", function() {
-        var t = d3.transition()
-        .duration(refreshT);
-        sampleUp(t);
+        if(!buttonStatus) {
+            var t = d3.transition().duration(refreshT)
+            buttonStatus = true;
+            sampleUp(t);
+        } else {
+            buttonStatus = false;
+            svg.selectAll("*").interrupt();
+        }
     })
