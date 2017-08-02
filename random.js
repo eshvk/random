@@ -29,6 +29,7 @@ svg
     .attr("class", "button")
     .attr("cx", w / 8 + padding)
     .attr("cy", eS / 2 + padding)
+    .attr("fill", "#009E73")
     .attr("fill-opacity", "0.5")
     .attr("r", buttonRadius);
 var equation = svg
@@ -134,6 +135,17 @@ function getSamples() {
     return Math.floor(Math.random() * 4) + 1;
 }
 
+function updateButton(buttonStatus) {
+    if(buttonStatus) {
+        d3
+        .selectAll(".button")
+        .attr("fill", "salmon");
+    } else {
+        d3
+        .selectAll(".button")
+        .attr("fill", "#009E73");
+    }
+}
 function updateRVO(t, c) {
     d3
     .selectAll(".randomvalue")
@@ -214,4 +226,5 @@ d3.selectAll(".button")
             buttonStatus = false;
             svg.selectAll("*").interrupt();
         }
+        updateButton(buttonStatus);
     })
