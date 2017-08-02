@@ -7,6 +7,7 @@
 }
 .button {
 	fill: salmon;
+	cursor: crosshair;
 }
 .equation {
 	font-family: "Gill Sans";

@@ -133,7 +133,6 @@ function getSamples() {
     nSamples += 1
     return Math.floor(Math.random() * 4) + 1;
 }
-var curr;
 
 function updateRVO(t, c) {
     d3
@@ -167,7 +166,7 @@ function resetData(){
     return dataset;
 }
 function updatePMF(t, c) {
-   var ii = dataset.findIndex(x => x.id == curr);
+   var ii = dataset.findIndex(x => x.id == c);
    dataset[ii].f += 1;
    chart
         .selectAll("line")
@@ -183,7 +182,7 @@ function updatePMF(t, c) {
 }
 
 function sampleUp(t) {
-    curr = getSamples();
+    let curr = getSamples();
     updatePMF(t, curr);
     updateRVO(t, curr);
     updateRVI(t, curr);
